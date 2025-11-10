@@ -1,0 +1,486 @@
+================================================================================
+CS 378 PROJECT #3 - REFINED SPECIFICATION
+Restaurant Information App
+Student: Sanskar Kalal
+Date: November 9, 2025
+================================================================================
+
+1. PROJECT OVERVIEW
+================================================================================
+A Flutter application that displays information about favorite Chicago 
+restaurants with three main screens: Restaurant List, Menu Display, and 
+Contact Information. The app demonstrates Material Design principles, 
+navigation patterns, and external URL launching capabilities.
+
+2. APPLICATION STRUCTURE
+================================================================================
+The app consists of three separate screens, each implemented in its own file:
+
+Screen Files (in lib/screens/ directory):
+- screens/restaurant_list_screen.dart    (Main list view - home screen)
+- screens/menu_screen.dart                (Restaurant menu display)
+- screens/contact_info_screen.dart        (Contact details display)
+
+Data Model Files (in lib/models/ directory):
+- models/menu_item.dart                   (MenuItem class)
+- models/restaurant.dart                  (Restaurant class)
+
+Data Files (in lib/data/ directory):
+- data/restaurant_data.dart               (Sample restaurant data)
+
+Entry Point:
+- lib/main.dart                           (App initialization)
+
+3. SCREEN 1: RESTAURANT LIST SCREEN (Main Screen)
+================================================================================
+
+3.1 AppBar Specification
+------------------------
+- Title: "Favorite Restaurants"
+- Background Color: Deep Orange (Colors.deepOrange)
+- Foreground Color: White
+- Elevation: 4.0
+- Center Title: Yes
+
+3.2 List Layout
+---------------
+- Widget Type: ListView.builder
+- Scrollable: Yes (8 restaurants to ensure scrollability)
+- Outer Padding: EdgeInsets.all(8.0) around the entire list
+
+3.3 List Item (Card) Specification
+-----------------------------------
+Each restaurant card contains:
+
+Card Properties:
+- Elevation: 3.0
+- Margin: EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0)
+- Shape: RoundedRectangleBorder with borderRadius: 12.0
+- ClipBehavior: Clip.antiAlias
+
+Card Content Layout (Row):
+┌─────────────────────────────────────────────────────┐
+│  [Image]  │  Restaurant Name                        │
+│  (80x80)  │  Restaurant Address                     │
+│           │                                          │
+└─────────────────────────────────────────────────────┘
+
+Left Section - Thumbnail Image:
+- Size: 80x80 pixels
+- Fit: BoxFit.cover
+- Widget: ClipRRect with borderRadius: 8.0
+- Padding: EdgeInsets.all(8.0)
+- Error handling: Gray placeholder with restaurant icon on load failure
+
+Right Section - Text Information:
+- Expanded widget to fill remaining space
+- Padding: EdgeInsets.all(12.0)
+
+Restaurant Name:
+- Font Size: 18.0
+- Font Weight: FontWeight.bold
+- Color: Colors.black87
+- Max Lines: 2
+- Overflow: TextOverflow.ellipsis
+
+Restaurant Address:
+- Font Size: 14.0
+- Font Weight: FontWeight.normal
+- Color: Colors.grey[600]
+- Max Lines: 2
+- Overflow: TextOverflow.ellipsis
+- Top Spacing: SizedBox(height: 6.0)
+
+3.4 Interaction Behaviors
+--------------------------
+Short Click (Tap):
+- Widget: InkWell wrapping card content
+- Action: Navigate to Menu Screen for selected restaurant
+- Navigation: Navigator.push with MaterialPageRoute
+- Visual Feedback: InkWell ripple effect
+
+Long Press:
+- Widget: GestureDetector (nested inside InkWell)
+- Trigger: onLongPressStart
+- Action: Display popup menu at exact press location
+- Visual Feedback: InkWell splash effect during press
+
+3.5 Popup Menu Specification
+-----------------------------
+Trigger: Long press on any list item
+
+Menu Position:
+- Appears at exact coordinates of the long press
+- Uses showMenu() with position parameter
+- Position calculated from LongPressStartDetails.globalPosition
+- RelativeRect.fromLTRB with dx and dy coordinates
+
+Menu Items (3 options):
+1. "Show Menu"
+   - Icon: Icons.restaurant_menu (Colors.deepOrange)
+   - Action: Navigate to Menu Screen
+   
+2. "Open Website"
+   - Icon: Icons.link (Colors.deepOrange)
+   - Action: Launch restaurant website URL in external browser
+   - Implementation: url_launcher package with LaunchMode.externalApplication
+   
+3. "Contact Information"
+   - Icon: Icons.info (Colors.deepOrange)
+   - Action: Navigate to Contact Info Screen
+
+Menu Styling:
+- Elevation: 8.0
+- Shape: RoundedRectangleBorder with borderRadius: 8.0
+- Item spacing: SizedBox(width: 12) between icon and text
+
+4. SCREEN 2: MENU SCREEN
+================================================================================
+
+4.1 AppBar Specification
+------------------------
+- Title: "[Restaurant Name] - Menu" (dynamic)
+- Background Color: Deep Orange (Colors.deepOrange)
+- Foreground Color: White
+- Elevation: 4.0
+- Leading: Automatic back button (provided by Flutter)
+- Center Title: Yes
+
+4.2 Content Layout
+------------------
+- Outer Widget: SingleChildScrollView (for scrollable menu content)
+- Padding: EdgeInsets.all(16.0)
+- Inner Widget: Column with crossAxisAlignment: CrossAxisAlignment.start
+
+Restaurant Image:
+- Widget: ClipRRect
+- Width: double.infinity (full screen width)
+- Height: 200.0 pixels
+- Fit: BoxFit.cover
+- BorderRadius: 12.0
+- Bottom Margin: SizedBox(height: 16.0)
+- Error handling: Gray placeholder with large restaurant icon
+
+Menu Section:
+- Title: "Menu Items"
+- Font Size: 22.0
+- Font Weight: FontWeight.bold
+- Bottom Spacing: SizedBox(height: 12.0)
+
+Menu Items Display:
+- Each item wrapped in SizedBox with width: double.infinity (full width)
+- Card widget inside SizedBox
+- Card Margin: EdgeInsets.symmetric(vertical: 8.0)
+- Card Elevation: 2.0
+- Padding inside card: EdgeInsets.all(12.0)
+
+Menu Item Format (Column):
+- Item Name: 
+  * FontSize: 16.0
+  * FontWeight: w600
+  * Color: Colors.black87
+  * Bottom spacing: SizedBox(height: 4.0)
+
+- Item Description: 
+  * FontSize: 14.0
+  * Color: Colors.grey[700]
+  * Bottom spacing: SizedBox(height: 8.0)
+
+- Item Price: 
+  * FontSize: 16.0
+  * FontWeight: bold
+  * Color: Colors.deepOrange
+
+4.3 Navigation
+--------------
+- Back button in AppBar returns to Restaurant List Screen
+- Uses automatic Navigator.pop()
+
+5. SCREEN 3: CONTACT INFO SCREEN
+================================================================================
+
+5.1 AppBar Specification
+------------------------
+- Title: "[Restaurant Name] - Contact" (dynamic)
+- Background Color: Deep Orange (Colors.deepOrange)
+- Foreground Color: White
+- Elevation: 4.0
+- Leading: Automatic back button
+- Center Title: Yes
+
+5.2 Content Layout
+------------------
+- Outer Widget: SingleChildScrollView
+- Padding: EdgeInsets.all(20.0)
+
+Card Container:
+- Single Card widget containing all contact information
+- Elevation: 4.0
+- Shape: RoundedRectangleBorder with borderRadius: 16.0
+- Inner Padding: EdgeInsets.all(20.0)
+
+Content Structure (Column with crossAxisAlignment: center):
+
+Restaurant Name:
+- Font Size: 24.0
+- Font Weight: FontWeight.bold
+- Color: Colors.deepOrange
+- Text Align: center
+- Bottom Spacing: SizedBox(height: 20.0)
+
+Section Divider:
+- Divider widget with thickness: 2.0
+- Bottom Spacing: SizedBox(height: 16.0)
+
+Contact Information Rows (4 sections):
+Each row contains:
+- Icon (size: 24.0, color: Colors.deepOrange)
+- SizedBox (width: 16.0) for spacing
+- Expanded Column with:
+  * Label (bold, 16.0)
+  * SizedBox (height: 4.0)
+  * Value (14.0)
+
+Information Displayed:
+1. Address
+   - Icon: Icons.location_on
+   - Label: "Address"
+   - Value: Full address
+   
+2. Phone Number
+   - Icon: Icons.phone
+   - Label: "Phone"
+   - Value: Formatted phone number
+   
+3. Website
+   - Icon: Icons.language
+   - Label: "Website"
+   - Value: Website URL (clickable)
+   - Color: Colors.blue with underline decoration
+   - Wrapped in GestureDetector with onTap
+   - Opens in external browser using url_launcher
+   
+4. Hours
+   - Icon: Icons.access_time
+   - Label: "Hours"
+   - Value: Operating hours
+
+Spacing:
+- SizedBox (height: 16.0) between each information row
+
+5.3 Navigation
+--------------
+- Back button in AppBar returns to Restaurant List Screen
+- Uses automatic Navigator.pop()
+
+6. DATA MODEL
+================================================================================
+
+MenuItem Class (in lib/models/menu_item.dart):
+----------------------------------------------
+class MenuItem {
+  final String name;
+  final String description;
+  final String price;
+
+  MenuItem({
+    required this.name,
+    required this.description,
+    required this.price,
+  });
+}
+
+Restaurant Class (in lib/models/restaurant.dart):
+-------------------------------------------------
+import 'menu_item.dart';
+
+class Restaurant {
+  final String name;
+  final String address;
+  final String phoneNumber;
+  final String website;
+  final String hours;
+  final String imagePath;
+  final List<MenuItem> menuItems;
+
+  Restaurant({
+    required this.name,
+    required this.address,
+    required this.phoneNumber,
+    required this.website,
+    required this.hours,
+    required this.imagePath,
+    required this.menuItems,
+  });
+}
+
+7. RESTAURANT DATA
+================================================================================
+Total: 8 restaurants to ensure list scrollability
+
+Restaurant List (in lib/data/restaurant_data.dart):
+1. Portillo's Hot Dogs
+   - Address: 100 W Ontario St, Chicago, IL 60654
+   - Specialty: Chicago-style hot dogs, Italian beef
+   - Image: assets/images/portillos.jpg
+   - 3 menu items
+
+2. Lou Malnati's Pizzeria
+   - Address: 439 N Wells St, Chicago, IL 60654
+   - Specialty: Deep dish pizza
+   - Image: assets/images/lou_malnatis.jpg
+   - 3 menu items
+
+3. The Purple Pig
+   - Address: 500 N Michigan Ave, Chicago, IL 60611
+   - Specialty: Mediterranean small plates
+   - Image: assets/images/purple_pig.jpg
+   - 3 menu items
+
+4. Girl & The Goat
+   - Address: 809 W Randolph St, Chicago, IL 60607
+   - Specialty: Contemporary American
+   - Image: assets/images/girl_and_goat.jpg
+   - 3 menu items
+
+5. Pequod's Pizza
+   - Address: 2207 N Clybourn Ave, Chicago, IL 60614
+   - Specialty: Pan pizza with caramelized crust
+   - Image: assets/images/pequods.jpg
+   - 3 menu items
+
+6. Frontera Grill
+   - Address: 445 N Clark St, Chicago, IL 60654
+   - Specialty: Mexican cuisine
+   - Image: assets/images/frontera_grill.jpg
+   - 3 menu items
+
+7. Au Cheval
+   - Address: 800 W Randolph St, Chicago, IL 60607
+   - Specialty: Burgers and diner fare
+   - Image: assets/images/au_cheval.jpg
+   - 3 menu items
+
+8. Gibsons Bar & Steakhouse
+   - Address: 1028 N Rush St, Chicago, IL 60611
+   - Specialty: Steakhouse
+   - Image: assets/images/gibsons.jpg
+   - 3 menu items
+
+Each restaurant includes:
+- Complete contact information (name, address, phone, website, hours)
+- Asset path for image
+- List of 3 MenuItem objects with name, description, and price
+
+8. ASSETS & RESOURCES
+================================================================================
+
+Images:
+- Location: assets/images/ directory
+- Format: JPG
+- Count: 8 images (one per restaurant)
+- Naming convention: lowercase with underscores
+- Sources: Public domain or properly licensed images
+- Registration: Declared in pubspec.yaml under flutter: assets:
+
+Dependencies (pubspec.yaml):
+- url_launcher: ^6.2.0 (for opening restaurant websites in browser)
+
+Asset Configuration:
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+
+9. TECHNICAL SPECIFICATIONS
+================================================================================
+
+Flutter SDK: Latest stable version (3.x)
+Dart SDK: >=3.9.2 <4.0.0
+Target Platforms: iOS and Android
+Minimum Android SDK Version: 21
+
+Main Application:
+- Entry: lib/main.dart
+- App Name: "Favorite Restaurants"
+- Theme: ColorScheme.fromSeed with Colors.deepOrange
+- Material 3: Enabled (useMaterial3: true)
+- Debug Banner: Disabled (debugShowCheckedModeBanner: false)
+- Home: RestaurantListScreen
+
+Navigation:
+- Type: Stack-based navigation using Navigator
+- Methods: Navigator.push() and automatic Navigator.pop()
+- Routes: MaterialPageRoute with builder functions
+- Animations: Default Material Design transitions
+
+State Management:
+- All screens use StatelessWidget
+- No complex state management required
+- Data passed via constructor parameters
+
+Widget Architecture:
+- InkWell for tap interactions with ripple effects
+- GestureDetector for long press detection
+- ListView.builder for efficient list rendering
+- SingleChildScrollView for scrollable content
+- Card widgets for elevated content containers
+
+Code Organization:
+- Feature-based file structure
+- Separate directories for screens, models, and data
+- Clear import paths using relative imports
+- Models imported where needed
+
+10. USER EXPERIENCE CONSIDERATIONS
+================================================================================
+
+Visual Feedback:
+- InkWell ripple effects on all tappable cards
+- Smooth page transitions with Material animations
+- Proper elevation and shadows on cards
+- Consistent color scheme throughout (deep orange primary)
+
+Error Handling:
+- Image loading errors display gray placeholder with icon
+- Graceful degradation for missing assets
+
+Accessibility:
+- Touch targets meet minimum 48x48 pixels (cards are larger)
+- Sufficient color contrast (Colors.black87 on white, white on deepOrange)
+- Semantic structure with proper widget hierarchy
+
+Layout Considerations:
+- Responsive design using Expanded widgets
+- Proper text overflow handling with ellipsis
+- Consistent padding and spacing throughout
+- Full-width cards for menu items
+
+11. IMPLEMENTATION DETAILS
+================================================================================
+
+Restaurant List Screen Implementation:
+- Combines InkWell (for tap feedback) and GestureDetector (for long press position)
+- Uses showMenu() with RelativeRect for precise popup positioning
+- Popup menu returns selected value via .then() callback
+- Three navigation paths: menu (tap and popup), website (popup), contact (popup)
+
+Menu Screen Implementation:
+- Receives Restaurant object via constructor
+- Maps over restaurant.menuItems to generate cards
+- Uses spread operator (...) to flatten list of widgets
+- Each card wrapped in SizedBox for full-width constraint
+
+Contact Info Screen Implementation:
+- Four information sections in consistent Row format
+- Website text wrapped in GestureDetector for tap handling
+- Uses url_launcher for external browser launch
+- All contact details displayed in single Card container
+
+URL Launching:
+- Package: url_launcher
+- Method: launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication)
+- Used in two locations: popup menu and contact info screen
+
+
+
